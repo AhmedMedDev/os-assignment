@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spelling Checker</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  textarea {
+    width: 100%;
+    height: 150px;
+  }
+  .error {
+    color: red;
+  }
+  .suggestions {
+    color: #666;
+  }
+</style>
+</head>
+<body>
+  <h1>Spelling Checker</h1>
+  <textarea id="textInput" placeholder="Type or paste your text here..." oninput="checkSpelling()"></textarea>
+  <div id="output"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/typo-js@1.2.3/typo.min.js"></script>
+  <script>
+    var dictionary = new Typo("en_US", false, false, { dictionaryPath: "typo/dictionaries" })
+
+    function checkSpelling() {
+      const textInput = document.getElementById('textInput');
+      const outputDiv = document.getElementById('output');
+      const text = textInput.value;
+      const words = text.split(/\s+/);
+
+      const correctedText = words
+        .map(word => {
+          const isCorrect = dictionary.check(word);
+          if (!isCorrect) {
+            const suggestions = dictionary.suggest(word);
+            return `<span class="error">${word}</span> <span class="suggestions">(${suggestions.join(', ')})</span>`;
+          }
+          return word;
+        })
+        .join(' ');
+
+      outputDiv.innerHTML = correctedText;
+    }
+  </script>
+</body>
+</html>
